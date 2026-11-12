@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Cafeteria - Multi-Shop Ordering System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="navbar">
+        <div class="nav-container">
+            <div class="brand">
+                <span class="brand-icon">🍽️</span>
+                <div class="brand-text">
+                    <h1>Campus Cafeteria</h1>
+                    <p class="brand-subtext">Multi-Shop Food Court • Pure Veg</p>
+                </div>
+            </div>
+
+            <nav class="nav-links">
+                <a href="#menu-section" class="nav-link active">Menu</a>
+                <button id="view-last-order-btn" class="nav-btn" title="View details of your previous order">
+                    <span>📋</span> Last Order
+                </button>
+                <a href="#cart-section" class="cart-badge-btn" id="nav-cart-btn">
+                    <span>🛒 Cart</span>
+                    <span id="nav-cart-count" class="cart-count">0</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Campus Notice Banner -->
+    <section class="notice-banner">
+        <div class="container notice-content">
+            <span class="notice-tag">Pure Veg</span>
+            <p>100% Vegetarian Campus Food Court • Order ahead from multiple shops to skip canteen queues! Select your pickup slot at checkout.</p>
+        </div>
+    </section>
+
+    <!-- Main Content Layout -->
+    <main class="container main-layout">
+        
+        <!-- Left Side: Menu Section -->
+        <section class="menu-section" id="menu-section">
+            
+            <div class="menu-header">
+                <div>
+                    <h2>Campus Cafeteria Menu</h2>
+                    <p class="text-muted">Explore fresh vegetarian delicacies prepared across college shops</p>
+                </div>
+            </div>
+
+            <!-- Controls: Shop Selection, Category Tabs and Search -->
+            <div class="menu-controls">
+                
+                <!-- 1. Shop Selection Filter (Multi-Shop Support) -->
+                <div class="shop-filter-row">
+                    <label for="shop-filter" class="filter-label">
+                        <span class="shop-label-icon">🏪</span>
+                        <strong>Select Cafeteria Shop:</strong>
+                    </label>
+                    <select id="shop-filter" class="form-control shop-select">
+                        <option value="all">🏬 All Cafeteria Shops (Full Campus Menu)</option>
+                        <!-- Options dynamically loaded from CAFETERIA_SHOPS in script.js -->
+                    </select>
+                </div>
+
+                <!-- 2. Category Buttons -->
+                <div class="category-tabs" id="category-tabs">
+                    <button class="cat-btn active" data-category="all">All Items</button>
+                    <button class="cat-btn" data-category="breakfast">Breakfast</button>
+                    <button class="cat-btn" data-category="lunch">Lunch</button>
+                    <button class="cat-btn" data-category="snacks">Snacks</button>
+                    <button class="cat-btn" data-category="beverages">Beverages</button>
+                </div>
+
+                <!-- 3. Search Bar -->
+                <div class="search-filter-row">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Search vegetarian dishes, drinks, snacks...">
+                    </div>
+                    <div class="pure-veg-indicator" title="All items in cafeteria are 100% vegetarian">
+                        <span class="veg-dot-badge"></span>
+                        <span>100% Pure Vegetarian</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Food Items Grid -->
+            <div class="food-grid" id="food-grid">
+                <!-- Rendered dynamically via JavaScript -->
+            </div>
+
+            <!-- No Results Message -->
+            <div id="no-results" class="no-results hidden">
+                <p>No food items found matching your selected shop or search query.</p>
+                <button id="reset-filter-btn" class="secondary-btn">Reset Filters</button>
+            </div>
+        </section>
+
+        <!-- Right Side: Sticky Shopping Cart -->
+        <aside class="cart-section" id="cart-section">
+            <div class="cart-card">
+                <div class="cart-header">
+                    <div class="cart-title">
+                        <h3>Your Order Tray</h3>
+                        <span id="cart-items-count" class="text-muted">(0 items)</span>
+                    </div>
+                    <button id="clear-cart-btn" class="text-btn" title="Empty all items in cart">Clear</button>
+                </div>
+
+                <!-- Cart Items List (Grouped by Shop) -->
+                <div class="cart-items-container" id="cart-items-container">
+                    <!-- Populated dynamically by script.js grouped by shop -->
+                </div>
+
+                <!-- Cart Empty State -->
+                <div class="cart-empty" id="cart-empty">
+                    <div class="cart-empty-icon">🛒</div>
+                    <p><strong>Your tray is empty</strong></p>
+                    <p class="text-muted text-small">Browse items across campus shops and add your favorite dishes.</p>
+                </div>
+
+                <!-- Cart Summary & Checkout Details -->
+                <div class="cart-footer" id="cart-footer">
+                    <!-- Price Calculation -->
+                    <div class="bill-details">
+                        <div class="bill-row">
+                            <span>Subtotal</span>
+                            <span id="bill-subtotal">₹0.00</span>
+                        </div>
+                        <div class="bill-row">
+                            <span>Cafeteria Demo Tax (5%)</span>
+                            <span id="bill-tax">₹0.00</span>
+                        </div>
+                        <div class="bill-row total-row">
+                            <strong>Final Total</strong>
+                            <strong id="bill-total" class="total-price">₹0.00</strong>
+                        </div>
+                    </div>
+
+                    <!-- Pickup Time Slot Selection (Required) -->
+                    <div class="form-group">
+                        <label for="pickup-time-slot">
+                            <strong>Pickup Time Slot <span class="required">*</span></strong>
+                        </label>
+                        <select id="pickup-time-slot" class="form-control">
+                            <option value="">-- Select Pickup Slot --</option>
+                            <option value="10:00 - 10:15 AM">10:00 - 10:15 AM</option>
+                            <option value="10:15 - 10:30 AM">10:15 - 10:30 AM</option>
+                            <option value="10:30 - 10:45 AM">10:30 - 10:45 AM</option>
+                        </select>
+                        <small id="slot-error" class="error-text hidden">Please select a pickup time slot before checkout.</small>
+                    </div>
+
+                    <!-- Student Details (Optional Demo Fields) -->
+                    <div class="form-group student-inputs">
+                        <div>
+                            <label for="student-name">Student / Faculty Name</label>
+                            <input type="text" id="student-name" class="form-control" placeholder="e.g. Alex Sharma">
+                        </div>
+                        <div>
+                            <label for="student-roll">Roll No / College ID</label>
+                            <input type="text" id="student-roll" class="form-control" placeholder="e.g. LPU-2024-42">
+                        </div>
+                    </div>
+
+                    <!-- Checkout Button -->
+                    <button id="checkout-btn" class="checkout-btn">
+                        Proceed to Checkout
+                    </button>
+                    <p class="checkout-notice">Demo project: Order token is generated without real payment gateway.</p>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Order Summary / Receipt Modal -->
+    <div id="receipt-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div>
+                    <span class="success-badge">✓ Order Placed Successfully</span>
+                    <h3>Cafeteria Pickup Token</h3>
+                </div>
+                <button id="close-modal-btn" class="close-btn" title="Close">&times;</button>
+            </div>
+
+            <div class="modal-body" id="receipt-content">
+                <!-- Dynamically generated receipt details grouped by shop -->
+            </div>
+
+            <div class="modal-actions">
+                <button id="print-receipt-btn" class="secondary-btn">🖨️ Print Token</button>
+                <button id="new-order-btn" class="primary-btn">Order More Items</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Last Order Details Modal -->
+    <div id="last-order-modal" class="modal-overlay hidden">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div>
+                    <h3>Your Previous Order</h3>
+                    <p class="text-muted text-small">Stored locally on this device</p>
+                </div>
+                <button id="close-last-order-btn" class="close-btn" title="Close">&times;</button>
+            </div>
+
+            <div class="modal-body" id="last-order-content">
+                <!-- Dynamically filled with previous order info -->
+            </div>
+
+            <div class="modal-actions">
+                <button id="close-last-order-action" class="secondary-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification for User Feedback -->
+    <div id="toast" class="toast hidden">Item added to tray!</div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <p><strong>Campus Cafeteria Management System</strong> - Academic Project</p>
+            <p class="text-muted text-small">Pure Vegetarian Multi-Shop College Cafeteria • Built with HTML5, CSS3, and Vanilla JavaScript</p>
+        </div>
+    </footer>
+
+    <!-- Script File -->
+    <script src="script.js"></script>
+</body>
+</html>
